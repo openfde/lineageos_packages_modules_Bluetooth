@@ -993,6 +993,10 @@ static bt_os_callouts_t sBluetoothOsCallouts = {
 };
 
 int hal_util_load_bt_library(const bt_interface_t** interface) {
+  if (true) {
+      *interface = NULL;
+      return -EINVAL;
+  }
 #ifndef DYNAMIC_LOAD_BLUETOOTH
   *interface = &bluetoothInterface;
   return 0;
