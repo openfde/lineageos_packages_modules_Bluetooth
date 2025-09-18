@@ -16,6 +16,7 @@
 
 package com.android.server.bluetooth;
 
+import static android.bluetooth.BluetoothAdapter.DEFAULT_MAC_ADDRESS;
 import static android.bluetooth.BluetoothAdapter.STATE_BLE_ON;
 import static android.bluetooth.BluetoothAdapter.STATE_BLE_TURNING_OFF;
 import static android.bluetooth.BluetoothAdapter.STATE_BLE_TURNING_ON;
@@ -71,6 +72,7 @@ import android.os.UserManager;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.sysprop.BluetoothProperties;
+import android.text.TextUtils;
 import android.util.proto.ProtoOutputStream;
 
 import com.android.bluetooth.BluetoothStatsLog;
@@ -1483,6 +1485,10 @@ class BluetoothManagerService {
 
     String getAddress(AttributionSource source) {
         mAdapterLock.readLock().lock();
+        if (TextUtils.equals(SystemProperties.get("fde.fake_bluetooth_mac", "0"), "1")) {
+            mAdapterLock.readLock().unlock();
+            return BluetoothAdapter.DEFAULT_MAC_ADDRESS;
+        }
         try {
             if (mAdapter != null) {
                 return mAdapter.getAddress(source);
