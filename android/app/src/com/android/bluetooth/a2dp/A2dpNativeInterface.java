@@ -38,6 +38,7 @@ import com.android.internal.annotations.VisibleForTesting;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import android.openfde.Bluetooth;
 
 /**
  * A2DP Native Interface to/from JNI.
@@ -54,6 +55,7 @@ public class A2dpNativeInterface {
     private static BluetoothCodecType[] sSupportedCodecTypes;
 
     private static final Object INSTANCE_LOCK = new Object();
+    private static Bluetooth openfdeBluetooth;
 
     @VisibleForTesting
     private A2dpNativeInterface() {
@@ -63,6 +65,7 @@ public class A2dpNativeInterface {
         }
         mAdapterService = Objects.requireNonNull(AdapterService.getAdapterService(),
                 "AdapterService cannot be null when A2dpNativeInterface init");
+        openfdeBluetooth = Bluetooth.getInstance(null);
     }
 
     /**
@@ -119,7 +122,7 @@ public class A2dpNativeInterface {
      * @return true on success, otherwise false.
      */
     public boolean connectA2dp(BluetoothDevice device) {
-        return connectA2dpNative(getByteAddress(device));
+        return openfdeBluetooth.connect(device.getAddress());
     }
 
     /**
@@ -129,7 +132,7 @@ public class A2dpNativeInterface {
      * @return true on success, otherwise false.
      */
     public boolean disconnectA2dp(BluetoothDevice device) {
-        return disconnectA2dpNative(getByteAddress(device));
+        return openfdeBluetooth.disconnect(device.getAddress());
     }
 
     /**

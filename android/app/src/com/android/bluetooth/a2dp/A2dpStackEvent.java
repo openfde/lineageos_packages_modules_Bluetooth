@@ -32,10 +32,10 @@ public class A2dpStackEvent {
 
     // Do not modify without updating the HAL bt_av.h files.
     // Match up with btav_connection_state_t enum of bt_av.h
-    static final int CONNECTION_STATE_DISCONNECTED = 0;
-    static final int CONNECTION_STATE_CONNECTING = 1;
-    static final int CONNECTION_STATE_CONNECTED = 2;
-    static final int CONNECTION_STATE_DISCONNECTING = 3;
+    public static final int CONNECTION_STATE_DISCONNECTED = 0;
+    public static final int CONNECTION_STATE_CONNECTING = 1;
+    public static final int CONNECTION_STATE_CONNECTED = 2;
+    public static final int CONNECTION_STATE_DISCONNECTING = 3;
     // Match up with btav_audio_state_t enum of bt_av.h
     static final int AUDIO_STATE_REMOTE_SUSPEND = 0;
     static final int AUDIO_STATE_STOPPED = 1;
@@ -46,7 +46,7 @@ public class A2dpStackEvent {
     public int valueInt = 0;
     public BluetoothCodecStatus codecStatus;
 
-    A2dpStackEvent(int type) {
+    public A2dpStackEvent(int type) {
         this.type = type;
     }
 
