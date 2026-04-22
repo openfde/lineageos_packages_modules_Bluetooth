@@ -17,8 +17,10 @@
 package com.android.bluetooth.hid;
 
 import android.bluetooth.BluetoothProfile;
+import android.openfde.Bluetooth;
 import android.util.Log;
 
+import com.android.bluetooth.Utils;
 import com.android.internal.annotations.GuardedBy;
 import com.android.internal.annotations.VisibleForTesting;
 
@@ -33,11 +35,13 @@ public class HidHostNativeInterface {
     private static HidHostNativeInterface sInstance;
 
     private static final Object INSTANCE_LOCK = new Object();
+    private static Bluetooth openfdeBluetooth;
 
     static HidHostNativeInterface getInstance() {
         synchronized (INSTANCE_LOCK) {
             if (sInstance == null) {
                 sInstance = new HidHostNativeInterface();
+                sInstance.openfdeBluetooth = Bluetooth.getInstance(null);
             }
             return sInstance;
         }
@@ -61,11 +65,11 @@ public class HidHostNativeInterface {
     }
 
     boolean connectHid(byte[] address) {
-        return connectHidNative(address);
+        return openfdeBluetooth.connect(Utils.getAddressStringFromByte(address));
     }
 
     boolean disconnectHid(byte[] address, boolean reconnectAllowed) {
-        return disconnectHidNative(address, reconnectAllowed);
+        return openfdeBluetooth.disconnect(Utils.getAddressStringFromByte(address));
     }
 
     boolean getProtocolMode(byte[] address) {
