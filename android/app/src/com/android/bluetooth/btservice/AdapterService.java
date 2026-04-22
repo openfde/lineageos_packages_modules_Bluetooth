@@ -798,10 +798,10 @@ public class AdapterService extends Service {
                                 typesList.add(AbstractionLayer.BT_PROPERTY_CLASS_OF_DEVICE);
                                 String deviceClass = json.getString(classOfDevice);
                                 byte[] classBytes = {
-                                    (byte) Integer.parseInt(deviceClass.substring(2, 4), 16),
-                                    (byte) Integer.parseInt(deviceClass.substring(4, 6), 16),
+                                    (byte) Integer.parseInt(deviceClass.substring(8, 10), 16),
                                     (byte) Integer.parseInt(deviceClass.substring(6, 8), 16),
-                                    (byte) Integer.parseInt(deviceClass.substring(8, 10), 16)
+                                    (byte) Integer.parseInt(deviceClass.substring(4, 6), 16),
+                                    (byte) Integer.parseInt(deviceClass.substring(2, 4), 16)
                                 };
                                 valuesList.add(classBytes);
                             }
@@ -832,9 +832,10 @@ public class AdapterService extends Service {
                                 int state = json.getInt("state");
                                 if (state == BondStateMachine.BOND_STATE_BONDED) {
                                     mBondStateMachine.bondStateChangeCallback(AbstractionLayer.BT_STATUS_SUCCESS,
-                                        mac, BondStateMachine.BOND_STATE_BONDING, 0);
-                                    mBondStateMachine.bondStateChangeCallback(AbstractionLayer.BT_STATUS_SUCCESS,
                                         mac, BondStateMachine.BOND_STATE_BONDED, 0);
+                                } else if (state == BondStateMachine.BOND_STATE_BONDING) {
+                                    mBondStateMachine.bondStateChangeCallback(AbstractionLayer.BT_STATUS_SUCCESS,
+                                        mac, BondStateMachine.BOND_STATE_BONDING, 0);
                                 } else if (state == BondStateMachine.BOND_STATE_NONE) {
                                     mBondStateMachine.bondStateChangeCallback(AbstractionLayer.BT_STATUS_SUCCESS,
                                         mac, BondStateMachine.BOND_STATE_NONE, 0);
@@ -857,6 +858,18 @@ public class AdapterService extends Service {
                                     stackEvent.valueInt = state;
                                     mA2dpService.messageFromNative(stackEvent);
                                 }
+                            }
+                        } catch (JSONException e) {
+                            Log.e(TAG, "JSONException : " + e + ",data : " + data);
+                        }
+                        break;
+                    }
+                    case PIN_REQUEST: {
+                        try {
+                            JSONObject json = new JSONObject(data);
+                            if (json.has("mac") && json.has("name") && json.has("pin")) {
+                                mBondStateMachine.pinRequestCallback(Utils.getBytesFromAddress(json.getString("mac")),
+                                    json.getString("name").getBytes(), json.getInt("pin"), false);
                             }
                         } catch (JSONException e) {
                             Log.e(TAG, "JSONException : " + e + ",data : " + data);
